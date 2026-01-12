@@ -52,6 +52,7 @@ factory = StemmerFactory()
 stemmer = factory.create_stemmer()
 
 stopwords = set([
+    # Bahasa Indonesia
     # Kata hubung
     "yang", "dan", "di", "ke", "dari", "untuk", "pada", "dengan", "atau", 
     "karena", "tetapi", "namun", "sedangkan", "bahwa", "jika", "apabila",
@@ -83,7 +84,66 @@ stopwords = set([
     
     # Kata lainnya
     "ada", "tidak", "bukan", "tak", "belum", "ya", "lah", "kah", "pun",
-    "per", "para", "sang", "si"
+    "per", "para", "sang", "si",
+    
+    # Bahasa Inggris
+    # Articles & Determiners
+    "a", "an", "the", "this", "that", "these", "those", "some", "any",
+    
+    # Pronouns
+    "i", "you", "he", "she", "it", "we", "they", "me", "him", "her",
+    "us", "them", "my", "your", "his", "its", "our", "their", "mine",
+    "yours", "hers", "ours", "theirs", "myself", "yourself", "himself",
+    "herself", "itself", "ourselves", "themselves",
+    
+    # Prepositions
+    "in", "on", "at", "by", "for", "with", "about", "against", "between",
+    "into", "through", "during", "before", "after", "above", "below", "to",
+    "from", "up", "down", "out", "off", "over", "under", "of",
+    
+    # Conjunctions
+    "and", "but", "or", "nor", "so", "yet", "because", "although", "while",
+    "if", "unless", "since", "until", "when", "where", "whether",
+    
+    # Auxiliary verbs
+    "be", "am", "is", "are", "was", "were", "been", "being", "have", "has",
+    "had", "do", "does", "did", "will", "would", "shall", "should", "may",
+    "might", "must", "can", "could",
+    
+    # Common verbs
+    "get", "got", "make", "made", "go", "went", "take", "took", "come",
+    "came", "see", "saw", "know", "knew", "think", "thought", "say", "said",
+    
+    # Adverbs
+    "very", "really", "quite", "too", "also", "just", "only", "even",
+    "now", "then", "here", "there", "how", "why", "what", "who", "which",
+    
+    # Negations
+    "not", "no", "never", "none", "nothing", "nobody", "nowhere",
+    
+    # Others
+    "all", "both", "each", "every", "few", "many", "much", "more", "most",
+    "other", "another", "such", "than", "as", "well",
+    
+    # Bulan (Indonesia & Inggris)
+    "januari", "februari", "maret", "april", "mei", "juni", "juli", "agustus",
+    "september", "oktober", "november", "desember",
+    "january", "february", "march", "may", "june", "july", "august",
+    "october", "december",
+    
+    # Angka dan Ukuran
+    "nomor", "no", "volume", "vol", "halaman", "hlm", "edisi", "cetakan",
+    "number", "page", "edition", "version",
+    
+    # Creative Commons & Lisensi
+    "licensed", "license", "creative", "commons", "attribution", "sharealike",
+    "international", "copyright", "rights", "reserved",
+    
+    # Kata Umum Akademis
+    "work", "works", "study", "research", "paper", "journal", "article",
+    "thesis", "dissertation", "publication", "published", "author", "authors",
+    "university", "institut", "universitas", "fakultas", "jurusan", "program",
+    "studi", "pendidikan", "ilmu", "sains", "teknologi"
 ])
 
 def preprocessing(text):
@@ -97,7 +157,11 @@ def preprocessing(text):
     filtered = [t for t in tokens if t.isalpha() and t not in stopwords]
 
     # stemming
-    stemmed = [stemmer.stem(t) for t in filtered]
+    stemmed_raw = [stemmer.stem(t) for t in filtered]
+    
+    # ✨ FILTER: Buang kata hasil stemming yang terlalu pendek (< 2 karakter)
+    # Ini menghindari hasil stemming seperti 't', 'e', 's', dll
+    stemmed = [s for s in stemmed_raw if len(s) >= 2]
 
     return {
         "casefold": text,
